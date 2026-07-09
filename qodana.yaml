@@ -1,0 +1,34 @@
+# Qodana configuration for jol-compliance
+# JetBrains Qodana — https://www.jetbrains.com/help/qodana/
+# Linter: Community (free) — Markdown, YAML, shell script analysis
+version: "1.0"
+
+linter: jetbrains/qodana-python-community:2025.2
+
+profile:
+  name: qodana.recommended
+
+# Install any Python tooling used in scripts
+bootstrap: |
+  pip install --quiet yamllint markdownlint-cli2 2>/dev/null || true
+
+include:
+  - name: YAMLLint
+  - name: CheckShellScript
+  - name: MarkdownInspection
+
+exclude:
+  - name: All
+    paths:
+      - .idea
+      - .git
+      - "**/*.xlsx"          # Binary Excel files — skip
+      - "**/_ARCHIVED_*"     # Archived documents — skip
+
+# Quality gate: fail if any CRITICAL issue found
+failThreshold: 1
+severityThresholds:
+  any: CRITICAL
+
+# Coverage not applicable for docs repo
+coverageAnalysis: false
