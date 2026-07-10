@@ -22,13 +22,8 @@ exclude:
     paths:
       - .idea
       - .git
-      - "**/*.xlsx"          # Binary Excel files — skip
-      - "**/_ARCHIVED_*"     # Archived documents — skip
+      - "**/*.xlsx"
+      - "**/_ARCHIVED_*"
 
 # Quality gate: fail if any CRITICAL issue found
 failThreshold: 1
-severityThresholds:
-  any: CRITICAL
-
-# Coverage not applicable for docs repo
-coverageAnalysis: false
