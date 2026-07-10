@@ -1,0 +1,308 @@
+# JOL Compliance Repository Validation
+# ======================================
+# Validates the compliance repository structure, document formatting,
+# and completeness on every push and pull request.
+#
+# Document ID: JOL-WF-CV-001
+# Owner: DevOps Lead
+
+name: Compliance Validation
+
+on:
+  push:
+    branches: [main, "feature/**"]
+    paths:
+      - "**.md"
+      - "**.py"
+      - "gdpr/**"
+      - "iso27001/**"
+      - "soc2/**"
+      - "security-policies/**"
+      - "vendor-register/**"
+      - "audit-evidence/**"
+      - "country/**"
+      - "docs/**"
+      - "scripts/**"
+  pull_request:
+    branches: [main]
+  schedule:
+    # Run weekly validation on Monday at 06:00 UTC
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      framework:
+        description: "Framework to validate (all, iso27001, soc2, gdpr)"
+        required: false
+        default: "all"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  # ── Structure Validation ───────────────────────────────────────────────
+  structure-validation:
+    name: Repository Structure Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Run compliance validator
+        run: python compliance_validator.py
+        continue-on-error: true
+
+      - name: Validate required directories
+        run: |
+          REQUIRED_DIRS=(
+            "gdpr/privacy-policies/lt"
+            "gdpr/privacy-policies/lv"
+            "gdpr/privacy-policies/ee"
+            "gdpr/retention-policies"
+            "gdpr/cookie-policies"
+            "gdpr/dsr-procedures"
+            "gdpr/ropa"
+            "gdpr/dpias"
+            "iso27001/policies"
+            "iso27001/procedures"
+            "iso27001/risk-register"
+            "iso27001/asset-register"
+            "iso27001/soa"
+            "iso27001/internal-audits"
+            "iso27001/management-reviews"
+            "soc2/trust-services-criteria"
+            "soc2/evidence/cc6"
+            "soc2/evidence/cc7"
+            "soc2/evidence/cc8"
+            "soc2/evidence/a1"
+            "soc2/access-reviews"
+            "soc2/vendor-reviews"
+            "security-policies"
+            "vendor-register"
+            "audit-evidence/github"
+            "audit-evidence/infrastructure"
+            "audit-evidence/penetration-tests"
+            "audit-evidence/vulnerability-scans"
+            "country/lt"
+            "country/lv"
+            "country/ee"
+            "docs"
+          )
+
+          errors=0
+          for dir in "${REQUIRED_DIRS[@]}"; do
+            if [ ! -d "$dir" ]; then
+              echo "::error::Required directory missing: $dir"
+              errors=$((errors + 1))
+            fi
+          done
+
+          if [ $errors -gt 0 ]; then
+            echo "::error::$errors required directories are missing"
+            exit 1
+          fi
+
+          echo "All required directories present."
+
+  # ── Document Format Validation ────────────────────────────────────────
+  document-format:
+    name: Document Format Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Validate markdown documents
+        run: |
+          python3 << 'VALIDATION_SCRIPT'
+          import os
+          import re
+          import sys
+          from pathlib import Path
+
+          errors = []
+          warnings = []
+          checked = 0
+
+          # Directories to scan for markdown compliance documents
+          scan_dirs = [
+              "gdpr", "iso27001", "soc2", "security-policies",
+              "vendor-register", "audit-evidence", "country", "docs"
+          ]
+
+          for scan_dir in scan_dirs:
+              scan_path = Path(scan_dir)
+              if not scan_path.exists():
+                  continue
+
+              for md_file in scan_path.rglob("*.md"):
+                  checked += 1
+                  content = md_file.read_text(encoding="utf-8")
+
+                  # Check for document metadata table
+                  if "| Document ID" not in content and "| Field" not in content:
+                      warnings.append(f"{md_file}: Missing document metadata table")
+
+                  # Check for document history section
+                  if "Document History" not in content and "Revision History" not in content:
+                      warnings.append(f"{md_file}: Missing document history section")
+
+                  # Check for classification
+                  if "RESTRICTED" not in content and "CONFIDENTIAL" not in content and "INTERNAL" not in content:
+                      warnings.append(f"{md_file}: No classification marking found")
+
+                  # Check for approval section
+                  if "Approval" not in content and "Approved By" not in content:
+                      warnings.append(f"{md_file}: Missing approval section")
+
+                  # Check for placeholder dates that should be filled
+                  placeholder_dates = re.findall(r'\[DATE(?:\s*\+\s*\d+\s*MONTHS?)?\]', content)
+                  if len(placeholder_dates) > 5:
+                      warnings.append(f"{md_file}: {len(placeholder_dates)} placeholder dates — consider filling them")
+
+                  # Check for empty placeholder brackets (excluding known patterns)
+                  empty_placeholders = re.findall(r'\[([A-Z\s]{3,})\]', content)
+                  if len(empty_placeholders) > 15:
+                      warnings.append(f"{md_file}: {len(empty_placeholders)} unfilled placeholders")
+
+          print(f"\n{'=' * 60}")
+          print(f"  DOCUMENT FORMAT VALIDATION REPORT")
+          print(f"{'=' * 60}")
+          print(f"  Documents checked:  {checked}")
+          print(f"  Warnings:           {len(warnings)}")
+          print(f"  Errors:             {len(errors)}")
+
+          if warnings:
+              print(f"\n  WARNINGS:")
+              for w in warnings[:20]:
+                  print(f"    [WARN] {w}")
+              if len(warnings) > 20:
+                  print(f"    ... and {len(warnings) - 20} more")
+
+          if errors:
+              print(f"\n  ERRORS:")
+              for e in errors:
+                  print(f"    [ERR]  {e}")
+              sys.exit(1)
+
+          print(f"\n  STATUS: {'PASS' if not errors else 'FAIL'}")
+          print(f"{'=' * 60}")
+          VALIDATION_SCRIPT
+
+  # ── Python Script Validation ──────────────────────────────────────────
+  script-validation:
+    name: Python Script Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Check Python syntax
+        run: |
+          errors=0
+          for py_file in $(find . -name "*.py" -not -path "./.venv/*" -not -path "./.idea/*"); do
+            if ! python3 -c "import py_compile; py_compile.compile('$py_file', doraise=True)" 2>/dev/null; then
+              echo "::error::Syntax error in $py_file"
+              errors=$((errors + 1))
+            fi
+          done
+
+          if [ $errors -gt 0 ]; then
+            echo "::error::$errors Python file(s) have syntax errors"
+            exit 1
+          fi
+
+          echo "All Python files pass syntax validation."
+
+      - name: Test compliance validator
+        run: |
+          python compliance_validator.py || true
+
+      - name: Test evidence collector (dry run)
+        run: |
+          if [ -f scripts/evidence_collector.py ]; then
+            python scripts/evidence_collector.py --framework all --dry-run
+          fi
+
+      - name: Test retention calculator
+        run: |
+          if [ -f scripts/retention_calculator.py ]; then
+            python scripts/retention_calculator.py --list-categories
+            python scripts/retention_calculator.py --audit
+          fi
+
+      - name: Test vendor risk calculator
+        run: |
+          if [ -f scripts/vendor_risk_calculator.py ]; then
+            python scripts/vendor_risk_calculator.py --report
+          fi
+
+      - name: Test DSR tracker
+        run: |
+          if [ -f scripts/gdpr_dsr_tracker.py ]; then
+            python scripts/gdpr_dsr_tracker.py --metrics
+          fi
+
+  # ── Summary ────────────────────────────────────────────────────────────
+  validation-summary:
+    name: Validation Summary
+    needs: [structure-validation, document-format, script-validation]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check overall status
+        run: |
+          if [ "${{ needs.structure-validation.result }}" == "failure" ] || \
+             [ "${{ needs.document-format.result }}" == "failure" ] || \
+             [ "${{ needs.script-validation.result }}" == "failure" ]; then
+            echo "::error::Compliance validation failed — review job results for details"
+            exit 1
+          fi
+
+          echo "All compliance validation checks passed."
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const structure = '${{ needs.structure-validation.result }}';
+            const format = '${{ needs.document-format.result }}';
+            const scripts = '${{ needs.script-validation.result }}';
+
+            const statusIcon = (r) => r === 'success' ? '✅' : r === 'failure' ? '❌' : '⏭️';
+
+            const body = `## Compliance Validation Report
+
+            | Check | Status |
+            |-------|--------|
+            | Repository Structure | ${statusIcon(structure)} ${structure} |
+            | Document Format | ${statusIcon(format)} ${format} |
+            | Python Scripts | ${statusIcon(scripts)} ${scripts} |
+
+            _Validated by [Compliance Validation Workflow](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})_`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body,
+            });

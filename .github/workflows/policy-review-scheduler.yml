@@ -1,0 +1,327 @@
+# JOL Policy Review Scheduler
+# ================================
+# Tracks and reminds about policy review cycles to ensure all
+# compliance documents are reviewed within their defined frequency.
+#
+# Document ID: JOL-WF-PR-001
+# Owner: Chief Compliance Officer
+
+name: Policy Review Scheduler
+
+on:
+  schedule:
+    # Run on the 1st of every month at 06:00 UTC
+    - cron: "0 6 1 * *"
+  workflow_dispatch:
+    inputs:
+      force_check:
+        description: "Force full review of all policies"
+        required: false
+        default: "false"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  # ── Policy Review Tracking ────────────────────────────────────────────
+  track-reviews:
+    name: Track Policy Review Schedule
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Analyse policy review status
+        run: |
+          python3 << 'POLICY_REVIEW'
+          import os
+          import re
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          now = datetime.now(tz=timezone.utc)
+
+          # Policy review schedule with defined frequencies
+          POLICIES = [
+              # ── Security Policies (annual review) ──
+              {
+                  "name": "Acceptable Use Policy",
+                  "path": "security-policies/acceptable-use-policy.md",
+                  "review_cycle_months": 12,
+                  "owner": "CISO",
+                  "category": "Security Policies",
+              },
+              {
+                  "name": "Password Policy",
+                  "path": "security-policies/password-policy.md",
+                  "review_cycle_months": 12,
+                  "owner": "CISO",
+                  "category": "Security Policies",
+              },
+              {
+                  "name": "Remote Work Security Policy",
+                  "path": "security-policies/remote-work-security-policy.md",
+                  "review_cycle_months": 12,
+                  "owner": "CISO",
+                  "category": "Security Policies",
+              },
+              {
+                  "name": "Incident Response Policy",
+                  "path": "security-policies/incident-response-policy.md",
+                  "review_cycle_months": 12,
+                  "owner": "CISO",
+                  "category": "Security Policies",
+              },
+              {
+                  "name": "Data Classification Policy",
+                  "path": "security-policies/data-classification-policy.md",
+                  "review_cycle_months": 12,
+                  "owner": "CISO",
+                  "category": "Security Policies",
+              },
+              {
+                  "name": "Encryption Policy",
+                  "path": "security-policies/encryption-policy.md",
+                  "review_cycle_months": 12,
+                  "owner": "CISO",
+                  "category": "Security Policies",
+              },
+              {
+                  "name": "Backup and Recovery Policy",
+                  "path": "security-policies/backup-and-recovery-policy.md",
+                  "review_cycle_months": 12,
+                  "owner": "IT Operations",
+                  "category": "Security Policies",
+              },
+              # ── ISO 27001 Documents (annual review) ──
+              {
+                  "name": "Information Security Policy (ISMS)",
+                  "path": "iso27001/policies/information-security-policy.md",
+                  "review_cycle_months": 12,
+                  "owner": "CISO",
+                  "category": "ISO 27001",
+              },
+              {
+                  "name": "Access Control Procedure",
+                  "path": "iso27001/procedures/access-control-procedure.md",
+                  "review_cycle_months": 12,
+                  "owner": "IT Security",
+                  "category": "ISO 27001",
+              },
+              {
+                  "name": "Risk Register",
+                  "path": "iso27001/risk-register/risk-register-2026.md",
+                  "review_cycle_months": 6,
+                  "owner": "CISO",
+                  "category": "ISO 27001",
+              },
+              {
+                  "name": "Asset Register",
+                  "path": "iso27001/asset-register/asset-register.md",
+                  "review_cycle_months": 12,
+                  "owner": "IT Asset Manager",
+                  "category": "ISO 27001",
+              },
+              {
+                  "name": "Statement of Applicability",
+                  "path": "iso27001/soa/statement-of-applicability.md",
+                  "review_cycle_months": 12,
+                  "owner": "CISO",
+                  "category": "ISO 27001",
+              },
+              # ── GDPR Documents (annual review, some semi-annual) ──
+              {
+                  "name": "Privacy Policy (LT)",
+                  "path": "gdpr/privacy-policies/lt/privacy-policy-lt.md",
+                  "review_cycle_months": 12,
+                  "owner": "DPO",
+                  "category": "GDPR",
+              },
+              {
+                  "name": "Privacy Policy (LV)",
+                  "path": "gdpr/privacy-policies/lv/privacy-policy-lv.md",
+                  "review_cycle_months": 12,
+                  "owner": "DPO",
+                  "category": "GDPR",
+              },
+              {
+                  "name": "Privacy Policy (EE)",
+                  "path": "gdpr/privacy-policies/ee/privacy-policy-ee.md",
+                  "review_cycle_months": 12,
+                  "owner": "DPO",
+                  "category": "GDPR",
+              },
+              {
+                  "name": "Data Retention Policy",
+                  "path": "gdpr/retention-policies/data-retention-policy.md",
+                  "review_cycle_months": 12,
+                  "owner": "DPO",
+                  "category": "GDPR",
+              },
+              {
+                  "name": "Cookie Policy",
+                  "path": "gdpr/cookie-policies/cookie-policy.md",
+                  "review_cycle_months": 12,
+                  "owner": "DPO",
+                  "category": "GDPR",
+              },
+              {
+                  "name": "DSR Procedure",
+                  "path": "gdpr/dsr-procedures/data-subject-rights-procedure.md",
+                  "review_cycle_months": 12,
+                  "owner": "DPO",
+                  "category": "GDPR",
+              },
+              {
+                  "name": "ROPA Template",
+                  "path": "gdpr/ropa/ropa-template.md",
+                  "review_cycle_months": 6,
+                  "owner": "DPO",
+                  "category": "GDPR",
+              },
+              {
+                  "name": "DPIA Template",
+                  "path": "gdpr/dpias/dpia-template.md",
+                  "review_cycle_months": 12,
+                  "owner": "DPO",
+                  "category": "GDPR",
+              },
+              # ── SOC 2 Documents (annual review) ──
+              {
+                  "name": "TSC Control Mapping",
+                  "path": "soc2/trust-services-criteria/tsc-control-mapping.md",
+                  "review_cycle_months": 12,
+                  "owner": "CISO",
+                  "category": "SOC 2",
+              },
+              {
+                  "name": "Quarterly Access Review Template",
+                  "path": "soc2/access-reviews/quarterly-access-review-template.md",
+                  "review_cycle_months": 3,
+                  "owner": "IT Security",
+                  "category": "SOC 2",
+              },
+              {
+                  "name": "Vendor Compliance Review Template",
+                  "path": "soc2/vendor-reviews/vendor-compliance-review-template.md",
+                  "review_cycle_months": 6,
+                  "owner": "Procurement",
+                  "category": "SOC 2",
+              },
+              # ── Other Documents ──
+              {
+                  "name": "Vendor Register Master",
+                  "path": "vendor-register/vendor-register-master.md",
+                  "review_cycle_months": 3,
+                  "owner": "Procurement",
+                  "category": "Vendor Management",
+              },
+              {
+                  "name": "DPA Template",
+                  "path": "vendor-register/dpa-template.md",
+                  "review_cycle_months": 12,
+                  "owner": "Legal / DPO",
+                  "category": "Vendor Management",
+              },
+              {
+                  "name": "Incident Response Playbook",
+                  "path": "docs/incident-response-playbook.md",
+                  "review_cycle_months": 6,
+                  "owner": "CISO",
+                  "category": "Guidance",
+              },
+              {
+                  "name": "Audit Preparation Guide",
+                  "path": "docs/audit-preparation-guide.md",
+                  "review_cycle_months": 12,
+                  "owner": "CCO",
+                  "category": "Guidance",
+              },
+              {
+                  "name": "New Employee Compliance Guide",
+                  "path": "docs/new-employee-compliance-guide.md",
+                  "review_cycle_months": 12,
+                  "owner": "HR / CCO",
+                  "category": "Guidance",
+              },
+          ]
+
+          print("\n" + "=" * 80)
+          print("  POLICY REVIEW SCHEDULE STATUS")
+          print(f"  Date: {now.strftime('%Y-%m-%d')}")
+          print("=" * 80)
+
+          # Group by category
+          categories = {}
+          for p in POLICIES:
+              cat = p["category"]
+              if cat not in categories:
+                  categories[cat] = []
+              categories[cat].append(p)
+
+          for category, policies in categories.items():
+              print(f"\n  ── {category} ──")
+              for p in policies:
+                  path = Path(p["path"])
+                  exists = path.exists()
+                  status = "EXISTS" if exists else "MISSING"
+
+                  # Get last git modification if available
+                  last_modified = "N/A"
+                  if exists:
+                      stat = path.stat()
+                      mtime = datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc)
+                      last_modified = mtime.strftime("%Y-%m-%d")
+                      months_since = (now.year - mtime.year) * 12 + (now.month - mtime.month)
+                      review_due = months_since >= p["review_cycle_months"]
+                      review_status = "REVIEW DUE" if review_due else "Current"
+                  else:
+                      review_status = "MISSING"
+
+                  cycle = f"{p['review_cycle_months']}mo"
+                  print(f"    [{status:7s}] {p['name']:<40s} {cycle:>5s}  {review_status:<12s}  {p['owner']}")
+
+          print(f"\n  Total policies tracked: {len(POLICIES)}")
+          missing = sum(1 for p in POLICIES if not Path(p['path']).exists())
+          print(f"  Missing: {missing}")
+          print(f"  Present: {len(POLICIES) - missing}")
+
+          print("\n" + "=" * 80)
+          POLICY_REVIEW
+
+  # ── Version Change Detection ──────────────────────────────────────────
+  version-changes:
+    name: Detect Version Changes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 30
+
+      - name: Check for recent policy modifications
+        run: |
+          echo "=== Recent Policy Changes (Last 30 Commits) ==="
+          echo ""
+
+          # Check for version changes in markdown files
+          CHANGED_POLICIES=$(git diff --name-only HEAD~30..HEAD 2>/dev/null | grep -E '\.md$' | head -20)
+
+          if [ -n "$CHANGED_POLICIES" ]; then
+            echo "Modified documents:"
+            echo "$CHANGED_POLICIES"
+            echo ""
+            echo "::notice::Policy changes detected — ensure version numbers and changelogs are updated"
+          else
+            echo "No policy modifications detected in recent commits."
+          fi
+
+          echo ""
+          echo "Reminder: When modifying policies:"
+          echo "  1. Update the version number in the document metadata table"
+          echo "  2. Add an entry to the Document History section"
+          echo "  3. Obtain re-approval from the document owner"
+          echo "  4. Update the CHANGELOG.md in the repository root"
