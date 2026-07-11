@@ -20,7 +20,6 @@ import argparse
 import json
 import sys
 from datetime import datetime, timezone
-from typing import Optional
 
 
 # ── Risk Scoring Weights ──────────────────────────────────────────────────
