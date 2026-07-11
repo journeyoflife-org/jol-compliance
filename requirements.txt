@@ -1,0 +1,4 @@
+# Python dependencies for jol-compliance helper scripts
+# These are installed by Qodana bootstrap and can be used locally.
+
+pyyaml>=6.0

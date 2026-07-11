@@ -8,9 +8,12 @@ linter: jetbrains/qodana-python-community:2024.3
 profile:
   name: qodana.recommended
 
-# Install any Python tooling used in scripts
+# Set up a Python virtual environment so Qodana can resolve the interpreter
+# and install tooling used during analysis.
 bootstrap: |
-  pip install --quiet yamllint markdownlint-cli2 2>/dev/null || true
+  python3 -m venv .venv
+  . .venv/bin/activate
+  pip install --quiet -r requirements.txt yamllint markdownlint-cli2 2>/dev/null || true
 
 include:
   - name: YAMLLint

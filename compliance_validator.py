@@ -39,6 +39,18 @@ class Finding:
     message: str
     path: Optional[str] = None
 
+    def __init__(
+        self,
+        severity: Severity,
+        category: str,
+        message: str,
+        path: Optional[str] = None,
+    ) -> None:
+        self.severity = severity
+        self.category = category
+        self.message = message
+        self.path = path
+
     def to_dict(self) -> dict:
         return {
             "severity": self.severity.value,
@@ -53,6 +65,16 @@ class ValidationReport:
     findings: list = field(default_factory=list)
     checks_run: int = 0
     checks_passed: int = 0
+
+    def __init__(
+        self,
+        findings: list = None,
+        checks_run: int = 0,
+        checks_passed: int = 0,
+    ) -> None:
+        self.findings = findings if findings is not None else []
+        self.checks_run = checks_run
+        self.checks_passed = checks_passed
 
     def add(self, finding: Finding) -> None:
         self.findings.append(finding)
@@ -472,7 +494,7 @@ def print_report(report: ValidationReport, quiet: bool = False) -> None:
 # Entry point
 # ---------------------------------------------------------------------------
 
-def run_validation(strict: bool = False) -> ValidationReport:
+def run_validation() -> ValidationReport:
     """Run all validators and return the report."""
     report = ValidationReport()
 
@@ -509,7 +531,7 @@ def main() -> int:
     )
 
     args = parser.parse_args()
-    report = run_validation(strict=args.strict)
+    report = run_validation()
 
     if args.json:
         print(json.dumps(report.to_dict(), indent=2))
