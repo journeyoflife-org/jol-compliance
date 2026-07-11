@@ -1,9 +1,7 @@
 # Qodana configuration for jol-compliance
 # JetBrains Qodana — https://www.jetbrains.com/help/qodana/
-# Linter: Community (free) — Markdown, YAML, shell script analysis
+# Linter: auto-detected by Qodana based on project files.
 version: "1.0"
-
-image: jetbrains/qodana-python-community:2024.3
 
 profile:
   name: qodana.recommended
@@ -13,7 +11,8 @@ profile:
 bootstrap: |
   python3 -m venv .venv
   . .venv/bin/activate
-  pip install --quiet -r requirements.txt yamllint markdownlint-cli2 2>/dev/null || true
+  python -m pip install --upgrade pip
+  pip install -r requirements.txt yamllint
 
 include:
   - name: YAMLLint
@@ -25,6 +24,7 @@ exclude:
     paths:
       - .idea
       - .git
+      - .venv
       - "**/*.xlsx"
       - "**/_ARCHIVED_*"
 
