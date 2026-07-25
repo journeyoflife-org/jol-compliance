@@ -1,0 +1,10 @@
+# jol-compliance — Development / CI Dependencies
+# ==================================================
+# Install locally:   pip install -r requirements-dev.txt
+# These packages are used by CI workflows and local development only.
+
+# Linting — configured in pyproject.toml [tool.ruff]
+ruff>=0.15.0,<1.0
+
+# Security scanning — configured in pyproject.toml [tool.bandit]
+bandit>=1.9.0,<2.0

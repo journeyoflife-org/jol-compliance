@@ -19,8 +19,7 @@ Usage:
 import argparse
 import json
 import sys
-from datetime import datetime, timezone
-
+from datetime import UTC, datetime
 
 # ── Risk Scoring Weights ──────────────────────────────────────────────────
 
@@ -215,7 +214,7 @@ def calculate_vendor_risk(vendor: dict) -> dict:
         "review_frequency": review_frequency[risk_level],
         "dpa_signed": vendor.get("dpa_signed", False),
         "notes": vendor.get("notes", ""),
-        "assessed_at": datetime.now(tz=timezone.utc).isoformat(),
+        "assessed_at": datetime.now(tz=UTC).isoformat(),
     }
 
 
@@ -237,7 +236,7 @@ def print_assessment(result: dict) -> None:
     print(f"  DPA Signed:       {'Yes' if result['dpa_signed'] else 'NO — ACTION REQUIRED'}")
     print(f"  Review Frequency: {result['review_frequency']}")
 
-    print(f"\n  RISK FACTORS:")
+    print("\n  RISK FACTORS:")
     print(f"  {'Factor':<30s} {'Value':<20s} {'Score':>6s}")
     print(f"  {'-' * 58}")
     for f in result["factors"]:
@@ -247,7 +246,7 @@ def print_assessment(result: dict) -> None:
         print(f"\n  Notes: {result['notes']}")
 
     # Recommendations
-    print(f"\n  RECOMMENDATIONS:")
+    print("\n  RECOMMENDATIONS:")
     if result["risk_level"] == "CRITICAL":
         print("    [!] Immediate CISO review required")
         print("    [!] Verify DPA and SCCs are current")
@@ -265,10 +264,10 @@ def print_assessment(result: dict) -> None:
 
 def print_report(results: list[dict]) -> None:
     """Print a summary risk report for all vendors."""
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
 
     print(f"\n{'=' * 72}")
-    print(f"  JOL VENDOR RISK REPORT")
+    print("  JOL VENDOR RISK REPORT")
     print(f"  Generated: {now.strftime('%Y-%m-%d %H:%M UTC')}")
     print(f"{'=' * 72}")
 
@@ -308,7 +307,7 @@ def print_report(results: list[dict]) -> None:
             action_items.append(f"Enhanced due diligence for {r['vendor_name']}")
 
     if action_items:
-        print(f"\n  ACTION ITEMS:")
+        print("\n  ACTION ITEMS:")
         for i, item in enumerate(action_items, 1):
             print(f"    {i}. {item}")
 

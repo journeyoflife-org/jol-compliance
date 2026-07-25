@@ -55,10 +55,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: 'requirements-dev.txt'
 
       - name: Run compliance validator
         run: python compliance_validator.py
-        continue-on-error: true
 
       - name: Validate required directories
         run: |
@@ -112,6 +113,30 @@ jobs:
 
           echo "All required directories present."
 
+  # ── Lint & Security ──────────────────────────────────────────────────
+  lint-and-security:
+    name: Lint & Security Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: 'requirements-dev.txt'
+
+      - name: Install dev dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Ruff lint check
+        run: ruff check compliance_validator.py main.py scripts/
+
+      - name: Bandit security scan
+        run: bandit -r compliance_validator.py main.py scripts/ -q
+
   # ── Document Format Validation ────────────────────────────────────────
   document-format:
     name: Document Format Validation
@@ -124,6 +149,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: 'requirements-dev.txt'
 
       - name: Validate markdown documents
         run: |
@@ -214,6 +241,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: 'requirements-dev.txt'
 
       - name: Check Python syntax
         run: |
@@ -264,7 +293,7 @@ jobs:
   # ── Summary ────────────────────────────────────────────────────────────
   validation-summary:
     name: Validation Summary
-    needs: [structure-validation, document-format, script-validation]
+    needs: [structure-validation, document-format, script-validation, lint-and-security]
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -272,7 +301,8 @@ jobs:
         run: |
           if [ "${{ needs.structure-validation.result }}" == "failure" ] || \
              [ "${{ needs.document-format.result }}" == "failure" ] || \
-             [ "${{ needs.script-validation.result }}" == "failure" ]; then
+             [ "${{ needs.script-validation.result }}" == "failure" ] || \
+             [ "${{ needs.lint-and-security.result }}" == "failure" ]; then
             echo "::error::Compliance validation failed — review job results for details"
             exit 1
           fi
@@ -287,6 +317,7 @@ jobs:
             const structure = '${{ needs.structure-validation.result }}';
             const format = '${{ needs.document-format.result }}';
             const scripts = '${{ needs.script-validation.result }}';
+            const lint = '${{ needs.lint-and-security.result }}';
 
             const statusIcon = (r) => r === 'success' ? '✅' : r === 'failure' ? '❌' : '⏭️';
 
@@ -297,6 +328,7 @@ jobs:
             | Repository Structure | ${statusIcon(structure)} ${structure} |
             | Document Format | ${statusIcon(format)} ${format} |
             | Python Scripts | ${statusIcon(scripts)} ${scripts} |
+            | Lint & Security | ${statusIcon(lint)} ${lint} |
 
             _Validated by [Compliance Validation Workflow](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})_`;
 

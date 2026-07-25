@@ -1,4 +1,9 @@
-# Python dependencies for jol-compliance helper scripts
-# These are installed by Qodana bootstrap and can be used locally.
-
-pyyaml>=6.0
+# jol-compliance — Runtime Dependencies
+# ========================================
+# All Python helper scripts in this repository use ONLY the Python
+# standard library (os, sys, json, argparse, hashlib, shutil, re,
+# pathlib, datetime, dataclasses, enum, typing).
+#
+# No third-party runtime packages are required.
+#
+# For development / CI tooling see requirements-dev.txt.

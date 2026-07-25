@@ -21,10 +21,8 @@ Usage:
 import argparse
 import json
 import sys
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Optional
-
 
 # ── Configuration ──────────────────────────────────────────────────────────
 
@@ -82,7 +80,7 @@ STATUSES = ["new", "identity-verified", "in-progress", "awaiting-info", "complet
 def load_requests() -> list[dict]:
     """Load DSR requests from data file."""
     if DATA_FILE.exists():
-        with open(DATA_FILE, "r", encoding="utf-8") as f:
+        with open(DATA_FILE, encoding="utf-8") as f:
             return json.load(f)
     return []
 
@@ -96,7 +94,7 @@ def save_requests(requests: list[dict]) -> None:
 
 def generate_id(requests: list[dict]) -> str:
     """Generate a unique DSR request ID."""
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
     year = now.strftime("%Y")
     seq = len([r for r in requests if r["id"].startswith(f"DSR-{year}")]) + 1
     return f"DSR-{year}-{seq:04d}"
@@ -118,7 +116,7 @@ def add_request(
         sys.exit(1)
 
     requests = load_requests()
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
     response_deadline = now + timedelta(days=STANDARD_RESPONSE_DAYS)
 
     if complex_request:
@@ -152,14 +150,14 @@ def add_request(
     return new_request
 
 
-def update_status(request_id: str, new_status: str, note: str = "") -> Optional[dict]:
+def update_status(request_id: str, new_status: str, note: str = "") -> dict | None:
     """Update the status of a DSR request."""
     if new_status not in STATUSES:
         print(f"Error: Invalid status '{new_status}'. Valid: {', '.join(STATUSES)}")
         return None
 
     requests = load_requests()
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
 
     for req in requests:
         if req["id"] == request_id:
@@ -178,7 +176,7 @@ def update_status(request_id: str, new_status: str, note: str = "") -> Optional[
     return None
 
 
-def list_requests(status_filter: Optional[str] = None) -> list[dict]:
+def list_requests(status_filter: str | None = None) -> list[dict]:
     """List all DSR requests, optionally filtered by status."""
     requests = load_requests()
     if status_filter:
@@ -189,7 +187,7 @@ def list_requests(status_filter: Optional[str] = None) -> list[dict]:
 def get_overdue_requests() -> list[dict]:
     """Get requests that are overdue or approaching deadline."""
     requests = load_requests()
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
     overdue = []
 
     for req in requests:
@@ -215,7 +213,7 @@ def get_overdue_requests() -> list[dict]:
 def calculate_metrics() -> dict:
     """Calculate DSR processing metrics."""
     requests = load_requests()
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
 
     total = len(requests)
     by_type: dict[str, int] = {}
@@ -281,7 +279,7 @@ def calculate_metrics() -> dict:
 
 def print_request(req: dict, show_history: bool = False) -> None:
     """Print a formatted DSR request."""
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
     deadline = datetime.fromisoformat(req["response_deadline"])
     days_remaining = (deadline - now).days
 
@@ -306,7 +304,7 @@ def print_request(req: dict, show_history: bool = False) -> None:
         print(f"  Notes:          {req['notes']}")
 
     if show_history and req.get("history"):
-        print(f"\n  HISTORY:")
+        print("\n  HISTORY:")
         for event in req["history"]:
             ts = event["timestamp"][:16].replace("T", " ")
             print(f"    [{ts}] {event['action']}")
@@ -321,12 +319,12 @@ def print_list(requests: list[dict]) -> None:
         return
 
     print(f"\n{'=' * 90}")
-    print(f"  JOL GDPR DATA SUBJECT RIGHTS REQUESTS")
+    print("  JOL GDPR DATA SUBJECT RIGHTS REQUESTS")
     print(f"{'=' * 90}")
     print(f"  {'ID':<18s} {'Type':<20s} {'Requester':<25s} {'Status':<12s} {'Days Left':>9s}")
     print(f"  {'-' * 86}")
 
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
     for req in sorted(requests, key=lambda r: r["received_date"]):
         deadline = datetime.fromisoformat(req["response_deadline"])
         days_left = (deadline - now).days
@@ -351,11 +349,11 @@ def print_list(requests: list[dict]) -> None:
 def print_metrics(metrics: dict) -> None:
     """Print DSR processing metrics."""
     print(f"\n{'=' * 60}")
-    print(f"  JOL DSR PROCESSING METRICS")
+    print("  JOL DSR PROCESSING METRICS")
     print(f"  Generated: {metrics['generated_at'][:19]}")
     print(f"{'=' * 60}")
 
-    print(f"\n  OVERVIEW:")
+    print("\n  OVERVIEW:")
     print(f"    Total Requests:     {metrics['total_requests']}")
     print(f"    Active:             {metrics['active_requests']}")
     print(f"    On-Time Completion: {metrics['completed_on_time']} ({metrics['on_time_percentage']}%)")
@@ -363,19 +361,19 @@ def print_metrics(metrics: dict) -> None:
     print(f"    Avg Resolution:     {metrics['avg_resolution_days']} days")
 
     if metrics["by_type"]:
-        print(f"\n  BY TYPE:")
+        print("\n  BY TYPE:")
         for dsr_type, count in sorted(metrics["by_type"].items()):
             print(f"    {dsr_type:<35s} {count:>4d}")
 
     if metrics["by_status"]:
-        print(f"\n  BY STATUS:")
+        print("\n  BY STATUS:")
         for status, count in sorted(metrics["by_status"].items()):
             print(f"    {status:<35s} {count:>4d}")
 
     # SLA compliance
     sla_target = 95.0
     compliance = "PASS" if metrics["on_time_percentage"] >= sla_target else "BELOW TARGET"
-    print(f"\n  SLA COMPLIANCE:")
+    print("\n  SLA COMPLIANCE:")
     print(f"    Target:             {sla_target}% on-time")
     print(f"    Actual:             {metrics['on_time_percentage']}%")
     print(f"    Status:             {compliance}")

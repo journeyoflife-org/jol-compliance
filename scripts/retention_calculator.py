@@ -20,9 +20,7 @@ Usage:
 import argparse
 import json
 import sys
-from datetime import datetime, timedelta, timezone
-from typing import Optional
-
+from datetime import UTC, datetime, timedelta
 
 # ── Retention Schedule ─────────────────────────────────────────────────────
 # Based on gdpr/retention-policies/data-retention-policy.md
@@ -184,7 +182,7 @@ RETENTION_SCHEDULES: dict[str, dict] = {
 def calculate_disposal_date(
     collected_date: datetime,
     category: str,
-    country: Optional[str] = None,
+    country: str | None = None,
 ) -> dict:
     """Calculate the disposal date for a given data category."""
     schedule = RETENTION_SCHEDULES.get(category)
@@ -209,13 +207,13 @@ def calculate_disposal_date(
     else:
         disposal_date = None
 
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
     days_remaining = None
     status = "N/A"
 
     if disposal_date:
         disposal_aware = disposal_date.replace(
-            hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone.utc
+            hour=0, minute=0, second=0, microsecond=0, tzinfo=UTC
         )
         days_remaining = (disposal_aware - now).days
         if days_remaining <= 0:
@@ -309,9 +307,12 @@ def audit_retention() -> None:
             )
 
         # Check for zero retention without event-based note
-        if schedule.get("retention_years", 0) == 0 and not schedule.get("retention_days"):
-            if "event" not in schedule.get("retention_note", "").lower():
-                info_count += 1
+        if (
+            schedule.get("retention_years", 0) == 0
+            and not schedule.get("retention_days")
+            and "event" not in schedule.get("retention_note", "").lower()
+        ):
+            info_count += 1
 
     print(f"\n  Categories audited: {len(RETENTION_SCHEDULES)}")
     print(f"  Checks run:         {info_count + len(warnings)}")

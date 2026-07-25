@@ -1,0 +1,59 @@
+# jol-compliance — Compliance Documentation Repository
+# ====================================================
+# Journey Of Life UAB multi-framework compliance repository
+# covering GDPR, ISO 27001:2022, and SOC 2 Type II.
+#
+# All Python scripts use only the standard library — no runtime
+# dependencies are required.  Dev / CI tooling is listed in
+# requirements-dev.txt.
+
+[project]
+name = "jol-compliance"
+version = "1.0.0"
+description = "Multi-framework compliance documentation repository (GDPR, ISO 27001, SOC 2)"
+requires-python = ">=3.12"
+license = { text = "Proprietary — Journey Of Life UAB" }
+readme = "README.md"
+
+# No runtime dependencies — all scripts use the Python standard library.
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.15.0",
+    "bandit>=1.9.0",
+]
+
+# ── Ruff Configuration ────────────────────────────────────────────────────
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+# compliance_validator.py is the primary entry point kept in the repo root;
+# all other helper scripts live under scripts/.
+src = ["scripts", "."]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "UP",   # pyupgrade
+    "S",    # flake8-bandit (informational — Bandit runs separately in CI)
+    "SIM",  # flake8-simplify
+]
+ignore = [
+    "S101",  # Use of assert — not applicable in this repo
+    "S603",  # subprocess call — not used, but safe to ignore globally
+    "S607",  # Starting a process with a partial executable path
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["compliance_validator"]
+
+# ── Bandit Configuration ──────────────────────────────────────────────────
+
+[tool.bandit]
+exclude_dirs = [".venv", ".idea", "__pycache__"]

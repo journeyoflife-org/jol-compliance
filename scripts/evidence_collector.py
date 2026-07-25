@@ -22,9 +22,8 @@ import hashlib
 import json
 import shutil
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-
 
 # ── Configuration ──────────────────────────────────────────────────────────
 
@@ -271,7 +270,7 @@ def get_file_metadata(file_path: Path) -> dict:
         "exists": True,
         "size_bytes": stat.st_size,
         "hash_sha256": compute_sha256(file_path),
-        "modified": datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).isoformat(),
+        "modified": datetime.fromtimestamp(stat.st_mtime, tz=UTC).isoformat(),
         "path": str(file_path.relative_to(REPO_ROOT)),
     }
 
@@ -320,7 +319,7 @@ def generate_manifest(
     dry_run: bool = False,
 ) -> dict:
     """Generate an evidence collection manifest (JSON)."""
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
 
     collected = [r for r in all_results if r["status"] == "COLLECTED"]
     missing = [r for r in all_results if r["status"] == "MISSING"]
@@ -439,7 +438,7 @@ def main() -> int:
         else [args.framework]
     )
 
-    print(f"JOL Evidence Collector v1.0")
+    print("JOL Evidence Collector v1.0")
     print(f"Repository: {REPO_ROOT}")
     print(f"Frameworks: {', '.join(frameworks)}")
     print(f"Output:     {args.output}")

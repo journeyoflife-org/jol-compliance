@@ -8,11 +8,13 @@ profile:
 
 # Set up a Python virtual environment so Qodana can resolve the interpreter
 # and install tooling used during analysis.
+# NOTE: This CI-only .venv is created inside the workspace and is excluded
+# from version control via .gitignore.  It does not affect the local dev venv.
 bootstrap: |
   python3 -m venv .venv
   . .venv/bin/activate
   python -m pip install --upgrade pip
-  pip install -r requirements.txt yamllint
+  pip install -r requirements-dev.txt
 
 include:
   - name: YAMLLint
@@ -28,5 +30,5 @@ exclude:
       - "**/*.xlsx"
       - "**/_ARCHIVED_*"
 
-# Quality gate: fail if any CRITICAL issue found
-failThreshold: 1
+# Quality gate: fail on any issue severity (appropriate for compliance documentation)
+failThreshold: 0

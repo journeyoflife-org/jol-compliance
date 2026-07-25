@@ -8,16 +8,14 @@ Usage:
     python compliance_validator.py [--strict] [--json] [--quiet]
 """
 
+import argparse
+import json
 import os
 import re
 import sys
-import json
-import argparse
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Optional
-
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -37,14 +35,14 @@ class Finding:
     severity: Severity
     category: str
     message: str
-    path: Optional[str] = None
+    path: str | None = None
 
     def __init__(
         self,
         severity: Severity,
         category: str,
         message: str,
-        path: Optional[str] = None,
+        path: str | None = None,
     ) -> None:
         self.severity = severity
         self.category = category
@@ -485,7 +483,8 @@ def print_report(report: ValidationReport, quiet: bool = False) -> None:
         elif report.error_count == 0:
             print(f"\n  {ANSI_BOLD}\033[93m⚠ Repository has warnings but no errors.{ANSI_RESET}")
         else:
-            print(f"\n  {ANSI_BOLD}\033[91m✗ Repository has {report.error_count} error(s) requiring attention.{ANSI_RESET}")
+            msg = f"\u2717 Repository has {report.error_count} error(s) requiring attention."
+            print(f"\n  {ANSI_BOLD}\033[91m{msg}{ANSI_RESET}")
 
         print(f"\n{ANSI_BOLD}{'='*70}{ANSI_RESET}\n")
 
