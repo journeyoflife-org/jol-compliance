@@ -1,0 +1,12 @@
+# CODEOWNERS — jol-compliance
+# SOC 2 CC6.1 (Segregation of Duties)
+# Teams: @journeyoflife-org/backend, frontend, devops, security, data
+
+# Global fallback
+*                                   @journeyoflife-org/security
+
+# Security-sensitive paths
+/.github/CODEOWNERS                 @journeyoflife-org/security @journeyoflife-org/security
+/.github/SECURITY.md                 @journeyoflife-org/security
+/.github/workflows/                  @journeyoflife-org/devops @journeyoflife-org/security
+/.github/dependabot.yml             @journeyoflife-org/devops
