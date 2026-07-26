@@ -1,0 +1,34 @@
+# Qodana configuration for jol-compliance
+# JetBrains Qodana — https://www.jetbrains.com/help/qodana/
+# Linter: auto-detected by Qodana based on project files.
+version: "1.0"
+
+profile:
+  name: qodana.recommended
+
+# Set up a Python virtual environment so Qodana can resolve the interpreter
+# and install tooling used during analysis.
+# NOTE: This CI-only .venv is created inside the workspace and is excluded
+# from version control via .gitignore.  It does not affect the local dev venv.
+bootstrap: |
+  python3 -m venv .venv
+  . .venv/bin/activate
+  python -m pip install --upgrade pip
+  pip install -r requirements-dev.txt
+
+include:
+  - name: YAMLLint
+  - name: CheckShellScript
+  - name: MarkdownInspection
+
+exclude:
+  - name: All
+    paths:
+      - .idea
+      - .git
+      - .venv
+      - "**/*.xlsx"
+      - "**/_ARCHIVED_*"
+
+# Quality gate: fail on any issue severity (appropriate for compliance documentation)
+failThreshold: 0

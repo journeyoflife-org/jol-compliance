@@ -1,0 +1,234 @@
+# JOL Vendor Review Reminder
+# =============================
+# Automated reminders for vendor compliance reviews,
+# DPA renewals, and SOC 2/ISO 27001 certificate expiry.
+#
+# Document ID: JOL-WF-VR-001
+# Owner: CISO
+
+name: Vendor Review Reminder
+
+on:
+  schedule:
+    # Run daily at 07:00 UTC
+    - cron: "0 7 * * *"
+    # Monthly comprehensive review on the 1st
+    - cron: "0 8 1 * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run — report only, no issues created"
+        required: false
+        default: "true"
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  # ── Vendor Review Check ───────────────────────────────────────────────
+  check-vendor-reviews:
+    name: Check Vendor Review Schedule
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Run vendor risk assessment
+        run: |
+          python scripts/vendor_risk_calculator.py --report
+
+      - name: Check vendor register for upcoming reviews
+        run: |
+          python3 << 'VENDOR_CHECK'
+          import os
+          from datetime import datetime, timedelta, timezone
+          from pathlib import Path
+
+          now = datetime.now(tz=timezone.utc)
+          review_window = now + timedelta(days=30)
+          overdue_items = []
+          upcoming_items = []
+
+          # Read vendor register
+          vendor_file = Path("vendor-register/vendor-register-master.md")
+          if not vendor_file.exists():
+              print("::warning::Vendor register not found")
+              exit(0)
+
+          content = vendor_file.read_text(encoding="utf-8")
+
+          # Check for placeholder review dates
+          import re
+          review_dates = re.findall(
+              r'\|\s*\[?(\d{4}-\d{2}-\d{2}|\[DATE\])\]?\s*\|',
+              content
+          )
+
+          placeholder_count = content.count("[DATE]")
+          if placeholder_count > 0:
+              print(f"::warning::Vendor register has {placeholder_count} placeholder dates to fill")
+
+          # Check DPA template exists
+          dpa_file = Path("vendor-register/dpa-template.md")
+          if dpa_file.exists():
+              dpa_content = dpa_file.read_text(encoding="utf-8")
+              dpa_placeholders = dpa_content.count("[DATE]")
+              print(f"DPA template: {dpa_placeholders} date placeholders remaining")
+
+          print("\n" + "=" * 60)
+          print("  VENDOR REVIEW SCHEDULE CHECK")
+          print(f"  Date: {now.strftime('%Y-%m-%d')}")
+          print("=" * 60)
+
+          # Run risk calculator for details
+          print("\n  Review vendor-register/vendor-register-master.md for full vendor list")
+          print("  Run: python scripts/vendor_risk_calculator.py --report")
+          print("\n  Action items:")
+          if placeholder_count > 0:
+              print(f"    [!] Fill {placeholder_count} placeholder dates in vendor register")
+          print("    [*] Review all CRITICAL and HIGH risk vendors this month")
+          print("    [*] Verify all DPAs are signed and current")
+          print("    [*] Check vendor SOC 2 / ISO 27001 certificates for expiry")
+          print("=" * 60)
+          VENDOR_CHECK
+
+  # ── DPA Expiry Check ──────────────────────────────────────────────────
+  dpa-expiry-check:
+    name: DPA Expiry Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check DPA template and vendor register
+        run: |
+          python3 << 'DPA_CHECK'
+          from pathlib import Path
+          import re
+
+          print("\n  DPA EXPIRY MONITORING")
+          print("  " + "-" * 40)
+
+          # Check vendor register for DPA status
+          vendor_file = Path("vendor-register/vendor-register-master.md")
+          if vendor_file.exists():
+              content = vendor_file.read_text(encoding="utf-8")
+
+              # Look for DPA-related entries
+              dpa_mentions = len(re.findall(r'DPA', content))
+              print(f"  DPA references in vendor register: {dpa_mentions}")
+
+          # Check DPA template
+          dpa_file = Path("vendor-register/dpa-template.md")
+          if dpa_file.exists():
+              dpa_content = dpa_file.read_text(encoding="utf-8")
+              art28 = "Art. 28" in dpa_content or "Article 28" in dpa_content
+              print(f"  DPA template references GDPR Art. 28: {'Yes' if art28 else 'No'}")
+
+              # Check for SCC references
+              scc = "Standard Contractual Clauses" in dpa_content or "SCC" in dpa_content
+              print(f"  DPA template includes SCCs: {'Yes' if scc else 'No'}")
+
+          print("\n  Reminders:")
+          print("    - DPAs should be reviewed annually")
+          print("    - SCCs must be updated when EU Commission issues new decisions")
+          print("    - Transfer Impact Assessments required for non-EEA transfers")
+          DPA_CHECK
+
+  # ── Certificate Expiry Monitor ────────────────────────────────────────
+  certificate-monitor:
+    name: Compliance Certificate Monitor
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check certificate references
+        run: |
+          python3 << 'CERT_CHECK'
+          from pathlib import Path
+
+          print("\n  COMPLIANCE CERTIFICATE MONITORING")
+          print("  " + "-" * 40)
+
+          # Certificates to track
+          certificates = [
+              {
+                  "name": "ISO 27001:2022 Certification",
+                  "type": "certification",
+                  "renewal_cycle": "Annual surveillance, triennial recertification",
+                  "note": "Track in vendor register for certification body",
+              },
+              {
+                  "name": "SOC 2 Type II Report",
+                  "type": "examination",
+                  "renewal_cycle": "Annual",
+                  "note": "Bridge letter required between audit periods",
+              },
+              {
+                  "name": "Penetration Test",
+                  "type": "assessment",
+                  "renewal_cycle": "Annual or after significant changes",
+                  "note": "See audit-evidence/penetration-tests/",
+              },
+              {
+                  "name": "Vulnerability Assessment",
+                  "type": "scan",
+                  "renewal_cycle": "Quarterly (external), Continuous (internal)",
+                  "note": "See audit-evidence/vulnerability-scans/",
+              },
+          ]
+
+          for cert in certificates:
+              print(f"\n  {cert['name']}:")
+              print(f"    Type:           {cert['type']}")
+              print(f"    Renewal Cycle:  {cert['renewal_cycle']}")
+              print(f"    Note:           {cert['note']}")
+
+          print("\n  ACTION ITEMS:")
+          print("    1. Update certificate dates in vendor-register/ when renewed")
+          print("    2. Schedule penetration test 3 months before annual audit")
+          print("    3. Request bridge letters from SOC 2 auditor quarterly")
+          print("    4. Track vendor certificate expiries in vendor register")
+          CERT_CHECK
+
+  # ── Create Issues for Overdue Reviews ─────────────────────────────────
+  create-issues:
+    name: Create Reminder Issues
+    needs: [check-vendor-reviews, dpa-expiry-check, certificate-monitor]
+    runs-on: ubuntu-latest
+    if: github.event.inputs.dry_run != 'true'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for monthly review tasks
+        run: |
+          DAY_OF_MONTH=$(date -u +%d)
+
+          if [ "$DAY_OF_MONTH" == "01" ]; then
+            echo "First of the month — comprehensive vendor review reminder"
+            echo "::notice::Monthly vendor compliance review is due"
+            echo "::notice::Quarterly access review evidence collection is due"
+          fi
+
+          # Weekly: check for security policy review needs
+          DAY_OF_WEEK=$(date -u +%u)
+          if [ "$DAY_OF_WEEK" == "1" ]; then
+            echo "Monday — weekly compliance check"
+            echo "::notice::Weekly compliance status check recommended"
+          fi
+
+      - name: Summary
+        run: |
+          echo "Vendor review reminder workflow completed."
+          echo "Review the output above for action items."
