@@ -1,0 +1,81 @@
+# Compliance Lint — Status Check for Repository Ruleset 18733439
+# =================================================================
+# Produces the "compliance-lint" status check required by the
+# jol-compliance repository ruleset (ID: 18733439).
+#
+# Runs lightweight, self-contained compliance checks (ruff, bandit,
+# structure validation) without external service dependencies.
+#
+# Compliance Controls:
+#   SOC 2 CC8.1  — Change Management: CI gate blocks non-compliant merges
+#   ISO 27001 A.8.9 — Change Management: Automated validation on every PR
+#   GDPR Art. 32   — Security: Code quality and security scanning
+#
+# Document ID: JOL-WF-CL-001
+# Owner: DevOps Lead
+# Refs: SOC 2 CC8.1, ISO 27001 A.8.9, GDPR Art. 32
+
+name: Compliance Lint Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run — report issues without failing the build"
+        required: false
+        default: "false"
+
+# SOC 2 CC6.1: Minimal permissions — least privilege principle
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  # Job ID "compliance-lint" produces the exact status check context
+  # required by ruleset 18733439 (context: "compliance-lint").
+  # Do NOT rename this job ID without updating the ruleset.
+  compliance-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: 'requirements-dev.txt'
+
+      - name: Install dev dependencies
+        # SOC 2 CC8.1: Reproducible builds — pinned dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run compliance lint
+        # Passes --dry-run flag from workflow_dispatch input to the script
+        run: |
+          DRY_RUN="${{ github.event.inputs.dry_run || 'false' }}"
+          if [ "$DRY_RUN" = "true" ]; then
+            bash scripts/run-compliance-lint.sh --dry-run
+          else
+            bash scripts/run-compliance-lint.sh
+          fi
+
+      - name: Upload lint results
+        # SOC 2 CC8.1: Audit evidence retained for 30 days
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compliance-lint-results
+          path: |
+            compliance-lint-report.txt
+            bandit-report.txt
+          retention-days: 30
+          if-no-files-found: ignore
