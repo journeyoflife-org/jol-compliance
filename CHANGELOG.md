@@ -8,6 +8,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Fixed — CI Workflow Repairs (R1 2026-09-16)
+- `.github/workflows/compliance-validation.yml` — Removed `cache: 'pip'` from 3 jobs (`structure-validation`, `document-format`, `script-validation`) that don't run `pip install`. The `setup-python@v5` cache post-step fails fatally when no pip cache directory exists. Kept cache in `lint-and-security` which does `pip install -r requirements-dev.txt`.
+- `.github/workflows/qodana.yml` — Disabled push/PR triggers (changed to `workflow_dispatch` only). `QODANA_TOKEN` declined by Qodana Cloud server (expired/revoked). Re-enable after token rotation. `compliance-lint.yml` (ruff + bandit) covers CI lint in the meantime.
+
 ### Planned
 - Expansion of country-specific compliance documents to additional EU member states
 - Integration of automated DSR tracking with production systems
@@ -105,6 +109,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 | Version | Date | Description |
 |---------|------|-------------|
 | 1.0.0 | [DATE] | Initial compliance repository — GDPR, ISO 27001, SOC 2 frameworks |
+| — | 2026-09-16 | R1: CI workflow repairs — fix pip cache failures in compliance-validation, disable broken qodana.yml |
 
 ---
 

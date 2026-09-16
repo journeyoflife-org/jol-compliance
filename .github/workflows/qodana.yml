@@ -1,10 +1,18 @@
 name: Compliance Lint
 
+# R1 2026-09-16: Disabled — QODANA_TOKEN declined by Qodana Cloud server
+# (expired or revoked). Re-enable after rotating the token in repo secrets.
+# The compliance-lint.yml workflow (ruff + bandit) covers CI lint in the
+# meantime and produces the check required by legacy ruleset 18733439.
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
+
+# Original triggers (restore after token rotation):
+# on:
+#   push:
+#     branches: [ main ]
+#   pull_request:
+#     branches: [ main ]
 
 jobs:
   qodana-scan:
