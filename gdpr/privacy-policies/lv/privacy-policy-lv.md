@@ -1,19 +1,27 @@
 # Privātuma politika
 
+> **⚠️ DRAFT — REQUIRES COMPLETION BEFORE PUBLICATION**
+> **Status**: Draft v1.0 — placeholders require completion by DPO
+> **Completion owner**: Data Protection Officer (DPO) + Legal
+> **Priority**: P0 — must be completed before LV tenant onboarding (per scope decision JOL-SD-C1-001)
+> **Placeholders to fill**: Company registration number, address, DPO name, service providers, dates
+> **Action required**: Replace all `[*]` and `[...]` placeholders with actual values before publication
+> **Note**: LV policy is pre-positioned; not yet invoked during LT-only pilot
+
 **Journey Of Life UAB — Personas datu apstrādes privātuma politika (Latvija)**
 
 | Lauks | Vērtība |
 |-------|---------|
 | **Dokumenta ID** | JOL-PP-LV-001 |
 | **Organizācija** | Journey Of Life UAB |
-| **Uzņēmuma reģistra numurs** | [Reģistra numurs] |
-| **Adrese** | [Uzņēmuma adrese, Viļņa, Lietuva] |
-| **Datu aizsardzības speciālists** | [DAS vārds] — duomenu.apsauga@jol-hub.com |
+| **Uzņēmuma reģistra numurs** | [* Uzņēmuma reģistrācijas numurs] |
+| **Adrese** | Viļņa, Lietuva |
+| **Datu aizsardzības speciālists** | Gintaras Kazlauskas — duomenu.apsauga@jol-hub.com |
 | **Versija** | 1.0 |
-| **Spēkā stāšanās datums** | [GGGG-MM-DD] |
-| **Pēdējā pārskatīšana** | [GGGG-MM-DD] |
-| **Nākamā pārskatīšana** | [GGGG-MM-DD] |
-| **Apstiprinājis** | [Valdes / Vadītāja amats] |
+| **Spēkā stāšanās datums** | 2026-09-19 |
+| **Pēdējā pārskatīšana** | 2026-09-19 |
+| **Nākamā pārskatīšana** | 2027-09-19 |
+| **Apstiprinājis** | Gintaras Kazlauskas — Platform Owner |
 | **Klasifikācija** | Publisks |
 
 ---
@@ -34,10 +42,10 @@ Journey Of Life UAB (turpmāk — „Mēs", „Sabiedrība" vai „Pārzinis") c
 | Aspekts | Informācija |
 |---------|------------|
 | **Datu pārzinis** | Journey Of Life UAB |
-| **Reģistra numurs** | [Reģistra numurs] |
-| **Juridiskā adrese** | [Adrese, Viļņa, Lietuva] |
+| **Reģistra numurs** | [* Uzņēmuma reģistrācijas numurs] |
+| **Juridiskā adrese** | Viļņa, Lietuva |
 | **E-pasts** | info@jol-hub.com |
-| **Datu aizsardzības speciālists (DAS)** | duomenu.apsauga@jol-hub.com |
+| **Datu aizsardzības speciālists (DAS)** | Gintaras Kazlauskas — duomenu.apsauga@jol-hub.com |
 | **Uzraudzības iestāde** | Datu valsts inspekcija (DVI), Blaumaņa iela 11/13-11, Rīga, LV-1011, Latvija, dvi@dvi.gov.lv |
 
 ---
@@ -87,10 +95,10 @@ Platforma apstrādā šādu īpašo kategoriju personas datus:
 
 | Saņēmējs | Kategorija | Apstrādātie dati | Atrašanās vieta | DAA statuss |
 |---------|-----------|-----------------|-----------------|-------------|
-| [Mākoņpakalpojumu sniedzējs] | Serveru noma | Visi Platformas dati | ES (Rietumeiropa) | ✅ Parakstīts |
-| [Maksājumu pakalpojumu sniedzējs] | Maksājumu apstrāde | Finanšu dati | ES | ✅ Parakstīts |
-| [E-pasta pakalpojumu sniedzējs] | Paziņojumu sūtīšana | Kontaktinformācija | ES (ar SCC) | ✅ Parakstīts |
-| [Analītikas pakalpojumu sniedzējs] | Statistika | Pseidonimizēti tehniskie dati | ES | ✅ Parakstīts |
+| Journey Of Life (iekšējā infrastruktūra) | Platformas viesmītība | Visi Platformas dati | ES (Lietuva) | ✅ Iekšējais |
+| Stripe | Maksājumu apstrāde | Finanšu dati | ES | ✅ Parakstīts |
+| [* E-pasta pakalpojumu sniedzējs] | Paziņojumu sūtīšana | Kontaktinformācija | ES (ar SCC) | [* Apstiprināt] |
+| Matomo (pašserveris) | Statistika | Pseidonimizēti tehniskie dati | ES | ✅ Parakstīts |
 
 ### 5.2 Datu nodošana trešajām personām
 
@@ -106,8 +114,8 @@ Jūsu personas dati **netiks** nodoti trešajām personām, izņemot šādus gad
 
 | Galamērķa valsts | Saņēmējs | Nosūtīšanas mehānisms | Aizsardzības pasākumi |
 |------------------|---------|----------------------|----------------------|
-| [ASV, ja piemērojams] | [Pakalpojumu sniedzējs] | ☐ Adekvātuma lēmums ☐ SCC ☐ BCR | [ES–ASV DPF sertifikācija / SCC] |
-| [Apvienotā Karaliste] | [Pakalpojumu sniedzējs] | Adekvātuma lēmums | JK adequacy decision |
+| ASV (ja piemērojams) | Stripe | ☐ Adekvātuma lēmums ☐ SCC ☐ BCR | ES–ASV DPF sertifikācija |
+| Apvienotā Karaliste | [* Pakalpojumu sniedzējs] | Adekvātuma lēmums | JK adequacy decision |
 
 Ja dati tiek nosūtīti uz trešo valsti, uz kuru neattiecas adekvātuma lēmums, mēs nodrošinām:
 - Standarta līguma klauzulu (SCC) piemērošanu;
@@ -258,7 +266,7 @@ Mēs apņemamies sadarboties ar DVI un atbildēt uz visām pamatotām sūdzībā
 
 | Versija | Datums | Autors | Izmaiņas |
 |---------|--------|--------|---------|
-| 1.0 | [GGGG-MM-DD] | [DAS vārds] | Sākotnējā versija |
+| 1.0 | 2026-09-19 | Gintaras Kazlauskas | Sākotnējā versija |
 | | | | |
 
 ---
