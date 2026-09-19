@@ -25,6 +25,12 @@ wheels/
 venv/
 ENV/
 
+# Secrets & Credentials
+.env
+.env.*
+*.secret
+*.credentials
+
 # IDE
 .idea/
 .vscode/
