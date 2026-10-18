@@ -1,19 +1,27 @@
 # Privaatsuspoliitika
 
+> **⚠️ DRAFT — REQUIRES COMPLETION BEFORE PUBLICATION**
+> **Status**: Draft v1.0 — placeholders require completion by DPO
+> **Completion owner**: Data Protection Officer (DPO) + Legal
+> **Priority**: P0 — must be completed before EE tenant onboarding (per scope decision JOL-SD-C1-001)
+> **Placeholders to fill**: Company registration number, address, DPO name, service providers, dates
+> **Action required**: Replace all `[*]` and `[...]` placeholders with actual values before publication
+> **Note**: EE policy is pre-positioned; not yet invoked during LT-only pilot
+
 **Journey Of Life UAB — Isikuandmete töötlemise privaatsuspoliitika (Eesti)**
 
 | Väli | Väärtus |
 |------|---------|
 | **Dokumendi ID** | JOL-PP-EE-001 |
 | **Organisatsioon** | Journey Of Life UAB |
-| **Registrikood** | [Registrikood] |
-| **Aadress** | [Ettevõtte aadress, Vilnius, Leedu] |
-| **Andmekaitsespetsialist** | [AKS nimi] — duomenu.apsauga@jol-hub.com |
+| **Registrikood** | [* Ettevõtte registrinumber] |
+| **Aadress** | Vilnius, Leedu |
+| **Andmekaitsespetsialist** | Gintaras Kazlauskas — duomenu.apsauga@jol-hub.com |
 | **Versioon** | 1.0 |
-| **Jõustumise kuupäev** | [AAAA-KK-PP] |
-| **Viimane ülevaatamine** | [AAAA-KK-PP] |
-| **Järgmine ülevaatamine** | [AAAA-KK-PP] |
-| **Kinnitanud** | [Juhatuse / Juhi ametikoht] |
+| **Jõustumise kuupäev** | 2026-09-19 |
+| **Viimane ülevaatamine** | 2026-09-19 |
+| **Järgmine ülevaatamine** | 2027-09-19 |
+| **Kinnitanud** | Gintaras Kazlauskas — Platform Owner |
 | **Klassifikatsioon** | Avalik |
 
 ---
@@ -34,10 +42,10 @@ Käesolev Poliitika on koostatud kooskõlas:
 | Aspekt | Teave |
 |--------|-------|
 | **Vastutav töötleja** | Journey Of Life UAB |
-| **Registrikood** | [Registrikood] |
+| **Registrikood** | [* Ettevõtte registrinumber] |
 | **Juriidiline aadress** | [Aadress, Vilnius, Leedu] |
 | **E-post** | info@jol-hub.com |
-| **Andmekaitsespetsialist (AKS)** | duomenu.apsauga@jol-hub.com |
+| **Andmekaitsespetsialist (AKS)** | Gintaras Kazlauskas — duomenu.apsauga@jol-hub.com |
 | **Järelevalveasutus** | Andmekaitse Inspektsioon (AKI), Väike-Ameerika 19, 10129 Tallinn, Eesti, info@aki.ee |
 
 ---
@@ -87,10 +95,10 @@ Platvorm töötleb järgmisi erikategooria isikuandmeid:
 
 | Vastuvõtja | Kategooria | Töödeldavad andmed | Asukoht | DPA staatus |
 |-----------|-----------|-------------------|---------|-------------|
-| [Pilveteenuse pakkuja] | Serverite rent | Kõik Platvormi andmed | EL (Lääne-Euroopa) | ✅ Allkirjastatud |
-| [Makseteenuse pakkuja] | Maksete töötlemine | Finantsandmed | EL | ✅ Allkirjastatud |
-| [E-posti teenuse pakkuja] | Teadete saatmine | Kontaktandmed | EL (koos SCC-ga) | ✅ Allkirjastatud |
-| [Analüütikateenuse pakkuja] | Statistika | Pseudonüümitud tehnilised andmed | EL | ✅ Allkirjastatud |
+| Journey Of Life (omataristu) | Platvormi majutus | Kõik Platvormi andmed | EL (Leedu) | ✅ Sisemine |
+| Stripe | Maksete töötlemine | Finantsandmed | EL | ✅ Allkirjastatud |
+| [* E-posti teenuse pakkuja] | Teadete saatmine | Kontaktandmed | EL (koos SCC-ga) | [* Kinnitada] |
+| Matomo (omateenindusserver) | Statistika | Pseudonüümitud tehnilised andmed | EL | ✅ Allkirjastatud |
 
 ### 5.2 Andmete edastamine kolmandatele isikutele
 
@@ -106,8 +114,8 @@ Teie isikuandmeid **ei edastata** kolmandatele isikutele, välja arvatud järgmi
 
 | Sihtkoht | Vastuvõtja | Edastamise mehhanism | Kaitsemeetmed |
 |----------|-----------|---------------------|---------------|
-| [USA, kui kohaldatav] | [Teenusepakkuja] | ☐ Piisavuse otsus ☐ SCC ☐ BCR | [EL–USA DPF sertifitseerimine / SCC] |
-| [Ühendkuningriik] | [Teenusepakkuja] | Piisavuse otsus | UK adequacy decision |
+| USA (kui kohaldatav) | Stripe | ☐ Piisavuse otsus ☐ SCC ☐ BCR | EL–USA DPF sertifitseerimine |
+| Ühendkuningriik | [* Teenusepakkuja] | Piisavuse otsus | UK adequacy decision |
 
 Kui andmeid edastatakse kolmandasse riiki, mille suhtes ei kehti piisavuse otsus, tagame me:
 - Standardsete lepingutingimuste (SCC) kohaldamise;
@@ -258,7 +266,7 @@ Me kohustume tegema koostööd AKI-ga ja vastama kõigile põhjendatud kaebustel
 
 | Versioon | Kuupäev | Autor | Muudatused |
 |---------|---------|-------|-----------|
-| 1.0 | [AAAA-KK-PP] | [AKS nimi] | Esialgne versioon |
+| 1.0 | 2026-09-19 | Gintaras Kazlauskas | Esialgne versioon |
 | | | | |
 
 ---

@@ -1,19 +1,26 @@
 # Privatumo politika
 
+> **⚠️ DRAFT — REQUIRES COMPLETION BEFORE PUBLICATION**
+> **Status**: Draft v1.0 — placeholders require completion by DPO
+> **Completion owner**: Data Protection Officer (DPO) + Legal
+> **Priority**: P0 — must be completed before pilot go-live (per scope decision JOL-SD-C1-001)
+> **Placeholders to fill**: Company registration number, address, DPO name, service providers, dates
+> **Action required**: Replace all `[*]` and `[...]` placeholders with actual values before publication
+
 **Journey Of Life UAB — Asmens duomenų tvarkymo privatumo politika**
 
 | Laukas | Reikšmė |
 |--------|---------|
 | **Dokumento ID** | JOL-PP-LT-001 |
 | **Organizacija** | Journey Of Life UAB |
-| **Įmonės kodas** | [Įmonės kodas] |
-| **Adresas** | [Įmonės adresas, Vilnius, Lietuva] |
-| **Duomenų apsaugos pareigūnas** | [DAP vardas] — duomenu.apsauga@jol-hub.com |
+| **Įmonės kodas** | [* Įmonės registracijos numeris] |
+| **Adresas** | Vilnius, Lietuva |
+| **Duomenų apsaugos pareigūnas** | Gintaras Kazlauskas — duomenu.apsauga@jol-hub.com |
 | **Versija** | 1.0 |
-| **Įsigaliojimo data** | [MMMM-MM-DD] |
-| **Paskutinė peržiūra** | [MMMM-MM-DD] |
-| **Kita peržiūra** | [MMMM-MM-DD] |
-| **Patvirtino** | [Valdybos / Vadovo pareigos] |
+| **Įsigaliojimo data** | 2026-09-19 |
+| **Paskutinė peržiūra** | 2026-09-19 |
+| **Kita peržiūra** | 2027-09-19 |
+| **Patvirtino** | Gintaras Kazlauskas — Platform Owner |
 | **Klasifikacija** | Viešas |
 
 ---
@@ -34,10 +41,10 @@ Journey Of Life UAB (toliau — „Mes", „Bendrovė" arba „Duomenų valdytoj
 | Aspektas | Informacija |
 |----------|------------|
 | **Duomenų valdytojas** | Journey Of Life UAB |
-| **Įmonės kodas** | [Įmonės kodas] |
+| **Įmonės kodas** | [* Įmonės registracijos numeris] |
 | **Buveinės adresas** | [Adresas, Vilnius, Lietuva] |
 | **El. paštas** | info@jol-hub.com |
-| **Duomenų apsaugos pareigūnas (DAP)** | duomenu.apsauga@jol-hub.com |
+| **Duomenų apsaugos pareigūnas (DAP)** | Gintaras Kazlauskas — duomenu.apsauga@jol-hub.com |
 | **Priežiūros institucija** | Valstybinė duomenų apsaugos inspekcija (VDAI), L. Sapiegos g. 17, 10312 Vilnius, ada@ada.lt |
 
 ---
@@ -87,10 +94,10 @@ Platforma tvarko šių specialių kategorijų asmens duomenis:
 
 | Gavėjas | Kategorija | Tvarkomi duomenys | Vieta | DAP statusas |
 |---------|-----------|-------------------|-------|-------------|
-| [Debesijos paslaugų teikėjas] | Serverių nuoma | Visi Platformos duomenys | ES (Vakarų Europa) | ✅ Pasirašyta |
-| [Mokėjimo paslaugų teikėjas] | Mokėjimų apdorojimas | Finansiniai duomenys | ES | ✅ Pasirašyta |
-| [El. pašto paslaugų teikėjas] | Pranešimų siuntimas | Kontaktiniai duomenys | ES (su SCC) | ✅ Pasirašyta |
-| [Analitikos paslaugų teikėjas] | Statistika | Pseudonimizuoti techniniai duomenys | ES | ✅ Pasirašyta |
+| Journey Of Life (nuosava infrastruktūra) | Platformos priegloba | Visi Platformos duomenys | ES (Lietuva) | ✅ Vidinė |
+| Stripe | Mokėjimų apdorojimas | Finansiniai duomenys | ES | ✅ Pasirašyta |
+| [* El. pašto paslaugų teikėjas] | Pranešimų siuntimas | Kontaktiniai duomenys | ES (su SCC) | [* Patvirtinti] |
+| Matomo (savas serveris) | Statistika | Pseudonimizuoti techniniai duomenys | ES | ✅ Pasirašyta |
 
 ### 5.2 Duomenų perdavimas trečiosioms šalims
 
@@ -106,8 +113,8 @@ Jūsų asmens duomenys **nebus** perduodami trečiosioms šalims, išskyrus šiu
 
 | Paskirties šalis | Gavėjas | Perdavimo mechanizmas | Apsaugos priemonės |
 |------------------|---------|----------------------|-------------------|
-| [JAV, jei taikoma] | [Paslaugų teikėjas] | ☐ Adekvatumo sprendimas ☐ SCC ☐ BCR | [ES–JAV DPF sertifikavimas / SCC] |
-| [Jungtinė Karalystė] | [Paslaugų teikėjas] | Adekvatumo sprendimas | JK adequacy decision |
+| JAV (jei taikoma) | Stripe | ☐ Adekvatumo sprendimas ☐ SCC ☐ BCR | ES–JAV DPF sertifikavimas |
+| Jungtinė Karalystė | [* Paslaugų teikėjas] | Adekvatumo sprendimas | JK adequacy decision |
 
 Jei duomenys perduodami į trečiąją šalį, kuriai netaikomas adekvatumo sprendimas, mes užtikriname:
 - Standartinių sutarčių sąlygų (SCC) taikymą;
@@ -258,7 +265,7 @@ Mes įsipareigojame bendradarbiauti su VDAI ir atsakyti į visus pagrįstus skun
 
 | Versija | Data | Autorius | Pakeitimai |
 |---------|------|---------|-----------|
-| 1.0 | [MMMM-MM-DD] | [DAP vardas] | Pradinė versija |
+| 1.0 | 2026-09-19 | Gintaras Kazlauskas | Pradinė versija |
 | | | | |
 
 ---
