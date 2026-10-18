@@ -1,15 +1,21 @@
 # Record of Processing Activities (ROPA)
 
+> **⚠️ TEMPLATE DOCUMENT** — This is a template for ROPAs per GDPR Art. 30.
+> **Status**: Template — requires completion for each processing activity.
+> **Completion owner**: Data Protection Officer (DPO) + Legal
+> **Action required**: Copy this template to `ROPA-[YYYY]-[NNN]-[activity-name].md` and complete all sections.
+> **Priority activities**: Donations processing, Parishioner data management, Clergy data management (all process Art. 9 special category data).
+
 **GDPR Article 30 — Record of Processing Activities**
 
 | Field | Value |
 |-------|-------|
-| **Organisation** | [Company Name] |
-| **Registration Number** | [Company Registration Number] |
-| **Registered Address** | [Company Address] |
-| **Data Protection Officer** | [DPO Name] — [DPO Email] |
-| **EU Representative (if applicable)** | [EU Representative Name] — [EU Representative Address] |
-| **Document Owner** | [Document Owner Name/Role] |
+| **Organisation** | Journey Of Life (JOL) — Roman Catholic Digital Mission Platform |
+| **Registration Number** | [To be registered] |
+| **Registered Address** | [To be registered] |
+| **Data Protection Officer** | [DPO Name — to be appointed] |
+| **EU Representative (if applicable)** | [If required per Art. 27] |
+| **Document Owner** | Data Protection Officer (DPO) |
 | **Version** | [Version Number] |
 | **Effective Date** | [YYYY-MM-DD] |
 | **Last Reviewed** | [YYYY-MM-DD] |
@@ -24,7 +30,7 @@
 
 | Ref. | Activity Name | Purpose of Processing | Legal Basis (Art. 6) | Special Category Basis (Art. 9) | Data Categories | Data Subject Categories | Recipient Categories | Third-Country Transfers | Retention Period | Technical & Organisational Measures |
 |------|--------------|----------------------|---------------------|-------------------------------|----------------|------------------------|---------------------|------------------------|-----------------|-------------------------------------|
-| PA-001 | [e.g. User Account Management] | [e.g. Provision of platform access] | [e.g. Art. 6(1)(b) — Contract performance] | [N/A or Art. 9(2)(a)/(d)] | [e.g. Name, email, role, credentials] | [e.g. Platform administrators, clergy members] | [e.g. Cloud hosting provider, payment processor] | [N/A or specify country + safeguard] | [e.g. Account lifetime + 24 months] | [e.g. Encryption at rest, RBAC, MFA] |
+| PA-001 | Parishioner directory | Enable parishes to manage congregation records and pastoral care | Art. 6(1)(b) — Contract performance | Art. 9(2)(d) — Legitimate activities of religious body | DC-01, DC-02, DC-04 | DS-03 | Cloud hosting provider | N/A (EU-only) | Account lifetime + 24 months | Encryption at rest, RBAC, MFA |
 | PA-002 | | | | | | | | | | |
 | PA-003 | | | | | | | | | | |
 
@@ -44,7 +50,7 @@
 
 | Ref. | Controller Name & Contact | Processing Activity | Data Categories | Data Subject Categories | Sub-Processors | Third-Country Transfers | Technical & Organisational Measures |
 |------|--------------------------|---------------------|----------------|------------------------|----------------|------------------------|-------------------------------------|
-| PR-001 | [e.g. Diocese of X] | [e.g. Member management] | | | [e.g. AWS EU-West, Stripe] | | |
+| PR-001 | [Diocese / Parish name] | [Processing activity on behalf of controller] | [Data categories] | [Data subject categories] | [Sub-processors: AWS EU-West, etc.] | [N/A or country + safeguard] | [Measures] |
 | PR-002 | | | | | | | |
 
 ---
@@ -84,9 +90,9 @@
 
 | Recipient | Category | Data Shared | Legal Basis | DPA in Place | Location |
 |-----------|----------|-------------|-------------|-------------|----------|
-| [e.g. AWS EMEA] | Cloud hosting provider | All platform data | Art. 28 Processor | ☐ Yes ☐ No | EU-West |
-| [e.g. Stripe] | Payment processor | Financial data | Art. 28 Processor | ☐ Yes ☐ No | EU |
-| [e.g. SendGrid] | Email service | Contact data | Art. 28 Processor | ☐ Yes ☐ No | EU (with SCCs) |
+| AWS EMEA | Cloud hosting provider | All platform data | Art. 28 Processor | ☐ Yes ☐ No | EU-West |
+| Stripe | Payment processor | Financial data (DC-05) | Art. 28 Processor | ☐ Yes ☐ No | EU |
+| SendGrid | Email service | Contact data (DC-02) | Art. 28 Processor | ☐ Yes ☐ No | EU |
 | | | | | | |
 
 ---
@@ -95,7 +101,7 @@
 
 | Destination Country | Recipient | Data Categories | Transfer Mechanism | Safeguards | Adequacy Decision |
 |-------------------|-----------|----------------|--------------------|------------|--------------------|
-| [e.g. United States] | [Provider name] | [Categories] | ☐ SCCs ☐ BCRs ☐ Adequacy ☐ Derogation | [e.g. EU-US DPF certification] | ☐ Yes ☐ No |
+| [Country if applicable] | [Provider name] | [Data categories] | ☐ SCCs ☐ BCRs ☐ Adequacy ☐ Derogation | [Safeguards] | ☐ Yes ☐ No |
 | | | | | | |
 
 ---
@@ -106,7 +112,7 @@
 
 | Data Category | Retention Period | Justification | Disposal Method |
 |--------------|-----------------|---------------|-----------------|
-| [e.g. Account data] | [e.g. Active + 24 months] | [e.g. Statute of limitations] | [e.g. Secure deletion] |
+| Account data | Active + 24 months | Statute of limitations | Secure deletion |
 | | | | |
 
 ---
@@ -146,4 +152,25 @@
 
 ---
 
-*This template aligns with GDPR Article 30 requirements and is designed for a multi-tenant SaaS platform serving religious institutions across EU member states. Legal review is recommended before adoption.*
+---
+
+## ⚠️ IMPORTANT: DPO Review Required
+
+**This is a template only.** Actual ROPAs must be completed by the Data Protection Officer (DPO) or designated compliance lead for each processing activity.
+
+**Required actions before production use:**
+1. Copy this template to `ROPA-[YYYY]-[NNN]-[activity-name].md`
+2. Complete all sections with actual processing details
+3. Document legal basis (Art. 6) and special category basis (Art. 9) for each activity
+4. Identify data flows and sub-processors
+5. Obtain DPO review and sign-off (Section 9)
+
+**Priority processing activities requiring ROPAs:**
+- Donations processing (PCI-DSS + GDPR Art. 9)
+- Parishioner data management (GDPR Art. 9 — religious affiliation)
+- Clergy records management (GDPR Art. 9 — religious affiliation)
+- Children's religious education records (GDPR Art. 9 + child protection)
+
+**Legal basis documentation:** Each ROPA must document Art. 9(2)(d) basis (legitimate activities of religious body) for special category data processing.
+
+*This template aligns with GDPR Article 30 requirements and is designed for Journey Of Life (JOL) — Roman Catholic Digital Mission Platform serving approximately 400,000 websites across 27 EU member states. Legal review by qualified DPO is required before adoption.*
