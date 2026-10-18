@@ -1,15 +1,21 @@
 # Data Protection Impact Assessment (DPIA)
 
+> **⚠️ TEMPLATE DOCUMENT** — This is a template for DPIAs per GDPR Art. 35.
+> **Status**: Template — requires completion for each high-risk processing activity.
+> **Completion owner**: Data Protection Officer (DPO) + Legal
+> **Action required**: Copy this template to `DPIA-[YYYY]-[NNN]-[activity-name].md` and complete all sections.
+> **Priority activities**: Donations processing, Parishioner data management, Clergy data management (all process Art. 9 special category data).
+
 **GDPR Article 35 — Data Protection Impact Assessment**
 
 | Field | Value |
 |-------|-------|
-| **Organisation** | [Company Name] |
-| **Project / System Name** | [Project Name] |
+| **Organisation** | Journey Of Life (JOL) — Roman Catholic Digital Mission Platform |
+| **Project / System Name** | [e.g. Donations Processing, Parishioner Management, Clergy Records] |
 | **DPIA Reference** | DPIA-[YYYY]-[NNN] |
-| **Data Protection Officer** | [DPO Name] — [DPO Email] |
-| **DPIA Lead** | [Assessor Name] — [Assessor Role] |
-| **Document Owner** | [Document Owner Name/Role] |
+| **Data Protection Officer** | [DPO Name — to be appointed] |
+| **DPIA Lead** | [Name] — [Role: DPO / Compliance Officer / Platform Architect] |
+| **Document Owner** | Data Protection Officer (DPO) |
 | **Version** | [Version Number] |
 | **Initiated Date** | [YYYY-MM-DD] |
 | **Completed Date** | [YYYY-MM-DD] |
@@ -24,7 +30,7 @@ Answer each question. If **any** answer is "Yes," a full DPIA is mandatory.
 
 | # | Screening Question | Yes | No | Notes |
 |---|-------------------|-----|-----|-------|
-| 1 | Does the processing involve special category data (Art. 9) — e.g., religious affiliation, health, children's data? | ☐ | ☐ | |
+| 1 | Does the processing involve special category data (Art. 9) — religious affiliation, pastoral care records, children's religious education? | ☐ | ☐ | |
 | 2 | Is the processing carried out on a large scale (≥400,000 data subjects)? | ☐ | ☐ | |
 | 3 | Does it involve systematic monitoring of publicly accessible areas? | ☐ | ☐ | |
 | 4 | Does it involve automated decision-making with legal or similarly significant effects? | ☐ | ☐ | |
@@ -55,24 +61,24 @@ Answer each question. If **any** answer is "Yes," a full DPIA is mandatory.
 
 | Aspect | Description |
 |--------|-------------|
-| **Geographic Scope** | [e.g. 28 EU member states — LT, LV, EE, PL, DE, FR, ...] |
-| **Data Subject Volume** | [e.g. ~400,000 institutions × avg. N members per institution] |
-| **Data Categories** | [Reference ROPA data category codes DC-01 through DC-XX] |
+| **Geographic Scope** | 27 EU member states — priority: LT, LV, EE (Baltic), PL, DE, FR |
+| **Data Subject Volume** | ~400,000 websites across 27 EU member states |
+| **Data Categories** | [Reference ROPA data category codes DC-01 through DC-XX — see gdpr/ropa/] |
 | **Processing Frequency** | [e.g. Continuous / batch / one-time] |
 
 ### 2.3 Context of Processing
 
 | Aspect | Description |
 |--------|-------------|
-| **Data Subject Relationship** | [e.g. Members of religious institutions using the platform voluntarily] |
-| **Data Subject Expectations** | [e.g. Expect confidential handling of parish membership and pastoral data] |
-| **Vulnerable Populations** | [e.g. Children in religious education, elderly congregants] |
+| **Data Subject Relationship** | Parishioners, clergy, donors, religious education participants |
+| **Data Subject Expectations** | Confidential handling of religious affiliation, pastoral care, donation records |
+| **Vulnerable Populations** | Children in religious education, elderly congregants, pastoral care recipients |
 
 ### 2.4 Purpose of Processing
 
 | Purpose | Description | Legal Basis |
 |---------|-------------|-------------|
-| [e.g. Member directory] | [e.g. Enable institutions to manage their congregation records] | [Art. 6(1)(b)] |
+| Parishioner directory | Enable parishes to manage congregation records and pastoral care | Art. 6(1)(b) + Art. 9(2)(d) |
 | | | |
 
 ---
@@ -244,4 +250,26 @@ For each identified risk, assess **likelihood** and **severity** on a 1–5 scal
 
 ---
 
-*This DPIA template is designed for a multi-tenant SaaS platform processing personal data — including special category data — of approximately 400,000 religious institutions across 28 EU member states. Legal review is recommended before adoption.*
+---
+
+## ⚠️ IMPORTANT: DPO Review Required
+
+**This is a template only.** Actual DPIAs must be completed by the Data Protection Officer (DPO) or designated compliance lead for each high-risk processing activity.
+
+**Required actions before production use:**
+1. Copy this template to `DPIA-[YYYY]-[NNN]-[activity-name].md`
+2. Complete all sections with actual processing details
+3. Conduct risk assessment with real data flows and systems
+4. Obtain DPO review and sign-off (Section 7)
+5. Obtain executive approval (Section 8)
+6. If residual risk is high, consult supervisory authority (Section 6)
+
+**Priority processing activities requiring DPIAs:**
+- Donations processing (PCI-DSS + GDPR Art. 9)
+- Parishioner data management (GDPR Art. 9 — religious affiliation)
+- Clergy records management (GDPR Art. 9 — religious affiliation)
+- Children's religious education records (GDPR Art. 9 + child protection)
+
+**Legal basis documentation:** Each DPIA must document Art. 9(2)(d) basis (legitimate activities of religious body) for special category data processing.
+
+*This template is designed for Journey Of Life (JOL) — Roman Catholic Digital Mission Platform processing personal data of approximately 400,000 websites across 27 EU member states. Legal review by qualified DPO is required before adoption.*
